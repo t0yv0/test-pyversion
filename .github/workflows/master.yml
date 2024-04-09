@@ -26,6 +26,7 @@ jobs:
         pulumi stack init  dev --non-interactive
         pulumi stack select dev --non-interactive
         export AWS_PROFILE=devsandbox
+        pulumi config set aws:region us-east-1
         pulumi preview --non-interactive
 
 name: check
