@@ -1,0 +1,35 @@
+env:
+  PYTHONVERSION: "3.11"
+
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+    - name: Install Pulumi CLI
+      uses: pulumi/actions@v5
+      with:
+        pulumi-version: ^3
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHONVERSION }}
+    - name: Preview
+      run: >-
+        STATE="$PWD/.state"
+        export PULUMI_CONFIG_PASSPHRASE="12345"
+        export PULUMI_BACKEND_URL="file://$STATE"
+        rm -rf "$STATE"
+        mkdir  "$STATE"
+        pulumi stack init.  dev --non-interactive
+        pulumi stack select dev --non-interactive
+        export AWS_PROFILE=devsandbox
+        pulumi preview --non-interactive
+
+name: check
+on:
+  push:
+    branches:
+    - main
